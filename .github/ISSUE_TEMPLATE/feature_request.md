@@ -1,9 +1,9 @@
 ---
 name: Feature request
-about: 새로운 기능 개발!
-title: Feature Request
+about: 새로운 Feature 제안
+title: "[✨ Feature]"
 labels: "✨ Feature"
-assignees: ''
+assignees: Kimgyuilli
 
 ---
 

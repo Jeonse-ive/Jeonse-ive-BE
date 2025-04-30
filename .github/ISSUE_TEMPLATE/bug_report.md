@@ -1,9 +1,9 @@
 ---
 name: Bug report
-about: 버그를 찾았어요!
-title: Bug report
+about: 버그 제보!
+title: "[\U0001F41E Bug Report]"
 labels: "\U0001F41E BugFix"
-assignees: ''
+assignees: Kimgyuilli
 
 ---
 
