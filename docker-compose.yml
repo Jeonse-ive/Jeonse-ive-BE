@@ -1,0 +1,37 @@
+services:
+  backend:
+    build:
+      context: .
+    container_name: jeonse-ive-spring-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - backend
+
+  db:
+    image: postgres:15
+    container_name: jeonse-ive-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=jeonse-ive
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+
+networks:
+  backend:
