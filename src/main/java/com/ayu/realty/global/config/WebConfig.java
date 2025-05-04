@@ -1,4 +1,4 @@
-// src/main/java/com/yourapp/config/WebConfig.java
+package com.ayu.realty.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
