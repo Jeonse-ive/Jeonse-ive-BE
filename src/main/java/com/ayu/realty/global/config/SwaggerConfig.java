@@ -16,7 +16,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Spring Login API 문서")
-                        .description("REST API 문서입니다.")
+                        .description("REST API 문서입니당.")
                         .version("v1.0.0")
                         .contact(new Contact()
                                 .name("AYU")
