@@ -1,3 +1,4 @@
+# docker-compose.prod.yml (변경사항은 profile만)
 services:
   backend:
     build:
@@ -10,7 +11,7 @@ services:
     env_file:
       - .env
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     networks:

@@ -217,4 +217,7 @@ redis/
 # 예: redis.conf 사용 시
 redis.conf
 
+target/
+build/
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,git,java,gradle
