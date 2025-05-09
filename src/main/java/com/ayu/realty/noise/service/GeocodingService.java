@@ -28,14 +28,17 @@ public class GeocodingService {
     private String KAKAO_API_KEY;
 
     public Optional<Coordinate> getCoordinates(String address) {
-        log.info(">> Kakao 주소 변환 요청: {}", address);
-        log.info(">> Kakao API Key = {}", KAKAO_API_KEY); // 이거 추가
+        log.info(">> [주소 변환 요청] 입력 주소: {}", address);
+        log.debug(">> [Kakao API Key] {}", KAKAO_API_KEY);
+
         try {
             URI uri = UriComponentsBuilder.fromHttpUrl(KAKAO_API_URL)
                     .queryParam("query", address)
                     .build()
                     .encode()
                     .toUri();
+
+            log.debug(">> 요청 URI: {}", uri);
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", "KakaoAK " + KAKAO_API_KEY);
@@ -46,15 +49,24 @@ public class GeocodingService {
                     uri, HttpMethod.GET, entity, KakaoGeoRes.class
             );
 
-            if (response.getBody() != null && !response.getBody().getDocuments().isEmpty()) {
-                KakaoGeoRes.Document doc = response.getBody().getDocuments().get(0);
+            log.debug(">> 응답 상태 코드: {}", response.getStatusCode());
+
+            KakaoGeoRes body = response.getBody();
+            if (body != null && !body.getDocuments().isEmpty()) {
+                KakaoGeoRes.Document doc = body.getDocuments().get(1);
                 Double lat = Double.parseDouble(doc.getY());
                 Double lng = Double.parseDouble(doc.getX());
+
+                log.info(">> [좌표 변환 성공] 위도: {}, 경도: {}", lat, lng);
                 return Optional.of(new Coordinate(lat, lng));
+            } else {
+                log.warn(">> [좌표 변환 실패] 결과 없음 - 입력 주소: {}", address);
             }
+
         } catch (Exception e) {
-            log.error("Kakao 주소 변환 실패: {}", address, e);
+            log.error(">> [예외 발생] 주소 변환 중 오류 - 입력 주소: {}", address, e);
         }
+
         return Optional.empty();
     }
 }
