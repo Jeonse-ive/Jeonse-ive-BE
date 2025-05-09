@@ -17,7 +17,8 @@ public enum ErrorCode implements ErrorType {
     OAUTH2_LOGIN_FAILED("E401", "소셜 로그인에 실패했습니다. 다시 시도해주세요.", HttpStatus.UNAUTHORIZED.value()),
 
     // Data
-    LOCATION_NOT_FOUND("E404", "위치를 찾을 수 없습니다", HttpStatus.NOT_FOUND.value());
+    LOCATION_NOT_FOUND("E404", "위치를 찾을 수 없습니다", HttpStatus.NOT_FOUND.value()),
+    MEASUREMENT_IMPORT_FAILED("E500", "측정 지점 엑셀 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR.value());
 
 
 

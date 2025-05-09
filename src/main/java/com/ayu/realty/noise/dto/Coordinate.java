@@ -2,10 +2,15 @@ package com.ayu.realty.noise.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
 @AllArgsConstructor
 public class Coordinate {
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
 }
+

@@ -48,7 +48,9 @@ public class GeocodingService {
 
             if (response.getBody() != null && !response.getBody().getDocuments().isEmpty()) {
                 KakaoGeoRes.Document doc = response.getBody().getDocuments().get(0);
-                return Optional.of(new Coordinate(doc.getY(), doc.getX()));
+                Double lat = Double.parseDouble(doc.getY());
+                Double lng = Double.parseDouble(doc.getX());
+                return Optional.of(new Coordinate(lat, lng));
             }
         } catch (Exception e) {
             log.error("Kakao 주소 변환 실패: {}", address, e);
