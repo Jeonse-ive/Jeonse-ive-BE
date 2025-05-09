@@ -51,7 +51,7 @@ public class GeocodingService {
                 return Optional.of(new Coordinate(doc.getY(), doc.getX()));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Kakao 주소 변환 실패: {}", address, e);
         }
         return Optional.empty();
     }

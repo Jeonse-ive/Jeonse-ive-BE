@@ -2,6 +2,7 @@ package com.ayu.realty.global.dto;
 
 
 import com.ayu.realty.global.response.ErrorType.ErrorType;
+import com.ayu.realty.global.response.SuccessType.DataSuccessCode;
 import com.ayu.realty.global.response.SuccessType.UserSuccessCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class ApiRes<T> {
     @Schema(description = "응답 데이터", nullable = true)
     private final T data;
 
-    // 성공 응답
+    // 유저 성공 응답
     public static <T> ApiRes<T> success(UserSuccessCode successCode, T data) {
         return new ApiRes<>(successCode.getCode(), successCode.getMessage(), data);
     }
@@ -29,10 +30,20 @@ public class ApiRes<T> {
         return new ApiRes<>(successCode.getCode(), successCode.getMessage(), null);
     }
 
+    // 데이터 성공 응답
+    public static <T> ApiRes<T> success(DataSuccessCode successCode, T data) {
+        return new ApiRes<>(successCode.getCode(), successCode.getMessage(), data);
+    }
+    public static ApiRes<Void> success(DataSuccessCode successCode) {
+        return new ApiRes<>(successCode.getCode(), successCode.getMessage(), null);
+    }
+
     // 실패 응답
-    public static ApiRes<Void> fail(ErrorType errorType) {
+    public static <T> ApiRes<T> fail(ErrorType errorType) {
         return new ApiRes<>(errorType.getCode(), errorType.getMessage(), null);
     }
+
+
 
     // 생성자
     private ApiRes(String code, String message, T data) {
