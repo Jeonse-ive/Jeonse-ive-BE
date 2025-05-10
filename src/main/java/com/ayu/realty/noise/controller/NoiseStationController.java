@@ -20,10 +20,14 @@ public class NoiseStationController {
     private final NoiseStationService noiseStationService;
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApiRes<Void>> importStations(@RequestParam("file") MultipartFile file) {
-        log.info(">> 요청 수신: 파일명 = {}", file.getOriginalFilename());
+    public ResponseEntity<ApiRes<Void>> importStations(
+            @RequestParam("noiseFile") MultipartFile noiseFile,
+            @RequestParam("stationInfoFile") MultipartFile stationInfoFile
+    ) {
+        log.info(">> 요청 수신: noiseFile = {}, stationInfoFile = {}", noiseFile.getOriginalFilename(), stationInfoFile.getOriginalFilename());
+
         try {
-            noiseStationService.saveStationsFromExcel(file.getInputStream());
+            noiseStationService.importStations(noiseFile.getInputStream(), stationInfoFile.getInputStream());
             return ResponseEntity.ok(ApiRes.success(DataSuccessCode.GEO_LOCATION_SUCCESS));
         } catch (Exception e) {
             log.error("엑셀 업로드 실패", e);

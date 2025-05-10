@@ -53,9 +53,10 @@ public class GeocodingService {
 
             KakaoGeoRes body = response.getBody();
             if (body != null && !body.getDocuments().isEmpty()) {
-                KakaoGeoRes.Document doc = body.getDocuments().get(1);
+                KakaoGeoRes.Document doc = body.getDocuments().get(0); // 첫 번째 결과 사용
                 Double lat = Double.parseDouble(doc.getY());
                 Double lng = Double.parseDouble(doc.getX());
+
 
                 log.info(">> [좌표 변환 성공] 위도: {}, 경도: {}", lat, lng);
                 return Optional.of(new Coordinate(lat, lng));
