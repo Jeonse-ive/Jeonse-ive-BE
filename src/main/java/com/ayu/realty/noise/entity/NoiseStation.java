@@ -19,7 +19,7 @@ public class NoiseStation {
     private String stationName; // 예: 서울특별시지점
 
     @Column(nullable = false)
-    private String shortAddress; // 예: 서울특별시 회기동
+    private String shortAddress;
 
     @Column(nullable = false)
     private Double latitude;
