@@ -1,4 +1,4 @@
-package com.ayu.realty.noise.dto;
+package com.ayu.realty.noise.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

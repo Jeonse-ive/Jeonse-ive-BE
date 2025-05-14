@@ -1,7 +1,7 @@
 package com.ayu.realty.noise.service;
 
 import com.ayu.realty.noise.dto.Coordinate;
-import com.ayu.realty.noise.dto.KakaoGeoRes;
+import com.ayu.realty.noise.dto.response.KakaoGeoRes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
