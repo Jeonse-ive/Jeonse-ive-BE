@@ -39,4 +39,24 @@ public class StationQueryService
                 .toList();
     }
 
+    public List<StationWithLatestNoiseRes> findWithReadingsByCity(String city) {
+        List<NoiseStation> stations = noiseStationRepository.findWithReadingsByCity(city);
+
+        return stations.stream()
+                .map(station -> {
+                    Optional<NoiseReading> latest = noiseReadingRepository
+                            .findTopByStationOrderByYearDescMonthDesc(station);
+
+                    return StationWithLatestNoiseRes.builder()
+                            .stationName(station.getStationName())
+                            .shortAddress(station.getShortAddress())
+                            .latitude(station.getLatitude())
+                            .longitude(station.getLongitude())
+                            .recentValue(latest.map(NoiseReading::getValue).orElse(null))
+                            .recordedAt(latest.map(r -> String.format("%d-%02d", r.getYear(), r.getMonth())).orElse(null))
+                            .build();
+                })
+                .toList();
+    }
+
 }
