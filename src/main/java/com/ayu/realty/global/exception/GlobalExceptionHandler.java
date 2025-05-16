@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Slf4j
 @RestControllerAdvice
@@ -59,4 +60,10 @@ public class GlobalExceptionHandler {
                 .status(ErrorCode.MEMBER_NOT_FOUND.getStatus())
                 .body(ApiRes.fail(ErrorCode.MEMBER_NOT_FOUND));
     }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public void handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
+        log.error(">>> Multipart 파일 누락: {}", ex.getMessage());
+    }
+
 }
