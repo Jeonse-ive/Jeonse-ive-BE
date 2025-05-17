@@ -31,6 +31,7 @@ jobs:
             git pull origin main
 
             echo "🛠 Build project"
+            chmod +x ./gradlew &&
             ./gradlew clean build -x test
 
             echo " Restart Docker"
