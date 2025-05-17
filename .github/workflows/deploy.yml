@@ -22,9 +22,20 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh ec2-user@54.180.157.93 "
-            cd Jeonse-ive-BE &&
-            git pull origin main &&
-            docker-compose -f docker-compose.prod.yml --env-file .env up --build -d
-          "
+          ssh ec2-user@54.180.157.93 <<'EOF'
+            set -e  # 실패 시 중단
 
+            cd Jeonse-ive-BE
+
+            echo " Pull latest code"
+            git pull origin main
+
+            echo "🛠 Build project"
+            ./gradlew clean build -x test
+
+            echo " Restart Docker"
+            docker-compose -f docker-compose.prod.yml down
+            docker-compose -f docker-compose.prod.yml --env-file .env up --build -d
+
+            echo "🚀 Deployment complete!"
+          EOF
