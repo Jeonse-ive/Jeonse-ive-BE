@@ -19,9 +19,16 @@ jobs:
         run: |
           mkdir -p env
           echo "${{ secrets.ENV_VARS }}" > env/prod.env
-          echo "[LOCAL] prod.env 생성됨:"
-          ls -l env/
-          file env/prod.env || echo "[LOCAL] file 명령어 실패"
+          echo "✅ [LOCAL] env/prod.env 생성 완료"
+
+      # 2-1. Verify .env file locally
+      - name: Verify .env file exists and is valid
+        run: |
+          echo "[DEBUG] 파일 정보"
+          ls -l env/ || echo "❌ 디렉터리 없음"
+          file env/prod.env || echo "❌ file 명령 실패"
+          echo "[DEBUG] 내용 미리보기"
+          cat env/prod.env || echo "❌ 파일 읽기 실패"
 
       # 3. Set up JDK 17
       - name: Set up JDK 17
@@ -48,24 +55,21 @@ jobs:
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 8. Push Docker Image to DockerHub
+      # 8. Push Docker Image
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest
 
-      # 9. EC2 접속 - app 디렉터리 생성
+      # 9. Create EC2 app directory
       - name: SSH to EC2 - Create app directory
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            mkdir -p /home/${{ secrets.SERVER_USERNAME }}/app
-            echo "[EC2] /app 디렉터리 생성 완료"
-            ls -ld /home/${{ secrets.SERVER_USERNAME }}/app
+          script: mkdir -p /home/${{ secrets.SERVER_USERNAME }}/app
 
-      # 10. docker-compose 파일 전송
+      # 10. Copy docker-compose file
       - name: Copy docker-compose.prod.yml
         uses: appleboy/scp-action@master
         with:
@@ -75,17 +79,26 @@ jobs:
           source: "docker-compose.prod.yml"
           target: "/home/${{ secrets.SERVER_USERNAME }}/app"
 
-      # ✅ .env 파일 직접 전송
-      - name: Copy .env file directly
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "env/prod.env"
-          target: "/home/${{ secrets.SERVER_USERNAME }}/app/.env"
+      # ✅ 11. Manually copy .env file with scp (and check if it exists before)
+      - name: Copy .env file using scp manually
+        run: |
+          echo "$SSH_KEY" > key.pem
+          chmod 600 key.pem
 
-      # ✅ .env 디버깅 및 강제 삭제 + 존재 확인
+          if [ ! -f env/prod.env ]; then
+            echo "❌ env/prod.env 파일이 존재하지 않습니다. 종료합니다."
+            exit 1
+          fi
+
+          echo "📦 .env 파일 내용:"
+          cat env/prod.env
+
+          echo "📡 .env 파일을 EC2로 복사합니다..."
+          scp -i key.pem -o StrictHostKeyChecking=no env/prod.env ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/${{ secrets.SERVER_USERNAME }}/app/.env
+        env:
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+
+      # ✅ 12. EC2에서 .env 상태 디버깅
       - name: Debug .env file on EC2
         uses: appleboy/ssh-action@master
         with:
@@ -94,23 +107,21 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USERNAME }}/app
-            echo "[EC2] .env 상태 확인:"
-            if [ -d ".env" ]; then
-              echo "⚠️ .env는 디렉터리입니다. 삭제합니다."
-              rm -rf .env
-            elif [ -f ".env" ]; then
-              echo "✅ .env는 파일입니다."
+            echo "[EC2] .env 파일 상태 확인:"
+            if [ -f ".env" ]; then
+              echo "✅ .env는 정상 파일입니다."
+              ls -l .env
+              file .env
+              echo "[내용 미리보기]"
+              cat .env
+            elif [ -d ".env" ]; then
+              echo "❌ .env가 디렉터리입니다. 문제 발생"
+              ls -ld .env
             else
               echo "❌ .env가 존재하지 않습니다."
             fi
 
-            echo "[EC2] 현재 디렉터리 목록:"
-            ls -la
-
-            echo "[EC2] .env 타입:"
-            file .env || echo ".env 파일 없음 또는 file 명령 실패"
-
-      # 11. Docker Compose로 컨테이너 재배포
+      # ✅ 13. Docker Compose Deploy
       - name: Deploy on EC2 with Docker Compose
         uses: appleboy/ssh-action@master
         with:
@@ -119,25 +130,19 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USERNAME }}/app
-            echo "[EC2] 도커 이전 컨테이너 정리 중..."
+            echo "[EC2] docker-compose.prod.yml 및 .env 위치 확인:"
+            ls -l
+            echo "[EC2] Docker Compose 배포 시작"
             docker compose -f docker-compose.prod.yml down || true
-
-            echo "[EC2] 이미지 정리 중..."
             docker image prune -a -f
-
-            echo "[EC2] 최신 이미지 Pull 중..."
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest
-
-            echo "[EC2] docker-compose 실행 중..."
             docker compose -f docker-compose.prod.yml up -d
 
-      # 12. 실행중인 컨테이너 확인
+      # ✅ 14. Verify containers
       - name: Show running containers
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            echo "[EC2] 현재 실행 중인 컨테이너:"
-            docker ps
+          script: docker ps
