@@ -130,8 +130,13 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USERNAME }}/app
+
+            echo "[EC2] DockerHub 로그인 시도 중..."
+            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
             echo "[EC2] docker-compose.prod.yml 및 .env 위치 확인:"
             ls -l
+
             echo "[EC2] Docker Compose 배포 시작"
             docker compose -f docker-compose.prod.yml down || true
             docker image prune -a -f
