@@ -85,6 +85,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USERNAME }}/app
+            rm -rf .env
             mv prod.env .env
 
       # 10. EC2 서버에서 컨테이너 실행 (Compose V2)
