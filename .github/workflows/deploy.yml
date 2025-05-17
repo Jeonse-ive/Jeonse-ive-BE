@@ -27,30 +27,30 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # 4. Gradle 권한 부여
+      # 4. Grant permission for gradlew
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 5. Build with Gradle (test 제외)
+      # 5. Build with Gradle (excluding tests)
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-      # 6. Docker 이미지 빌드
+      # 6. Docker build
       - name: Build Docker Image
         run: |
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest .
 
-      # 7. DockerHub 로그인
+      # 7. DockerHub login
       - name: DockerHub Login
         run: |
           echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      # 8. Docker 이미지 푸시
+      # 8. Push Docker Image to DockerHub
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest
 
-      # 9. EC2 접속 - 디렉토리 및 파일 전송
+      # 9. EC2 접속 - app 디렉터리 생성
       - name: SSH to EC2 - Create app directory
         uses: appleboy/ssh-action@master
         with:
@@ -59,6 +59,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: mkdir -p /home/${{ secrets.SERVER_USERNAME }}/app
 
+      # 10. docker-compose 파일 전송
       - name: Copy docker-compose.prod.yml
         uses: appleboy/scp-action@master
         with:
@@ -68,18 +69,18 @@ jobs:
           source: "docker-compose.prod.yml"
           target: "/home/${{ secrets.SERVER_USERNAME }}/app"
 
-      # ✅ 안전하게 .env 복사 (파일로 확실히 지정)
-      - name: Copy .env file safely
+      # ✅ .env 파일 직접 전송 (디렉터리 문제 방지)
+      - name: Copy .env file directly
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           source: "env/prod.env"
-          target: "/home/${{ secrets.SERVER_USERNAME }}/app/.env.env"
+          target: "/home/${{ secrets.SERVER_USERNAME }}/app/.env"
 
-      # ✅ 기존 .env 디렉토리 제거 + 파일로 이름 변경
-      - name: Rename to .env on EC2
+      # ✅ .env가 디렉터리일 경우 삭제 (안전장치)
+      - name: Ensure .env is a file
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
@@ -87,10 +88,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/${{ secrets.SERVER_USERNAME }}/app
-            sudo rm -rf .env
-            mv .env.env .env
+            if [ -d ".env" ]; then rm -rf .env; fi
 
-      # 10. EC2 서버에서 컨테이너 실행 (Compose V2)
+      # 11. Docker Compose로 컨테이너 재배포
       - name: Deploy on EC2 with Docker Compose
         uses: appleboy/ssh-action@master
         with:
@@ -104,7 +104,7 @@ jobs:
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest
             docker compose -f docker-compose.prod.yml up -d
 
-      # 11. 확인용 로그 출력
+      # 12. 실행중인 컨테이너 확인
       - name: Show running containers
         uses: appleboy/ssh-action@master
         with:
