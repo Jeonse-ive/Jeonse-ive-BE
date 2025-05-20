@@ -1,8 +1,7 @@
 # docker-compose.prod.yml (변경사항은 profile만)
 services:
   backend:
-    build:
-      context: .
+    image: kimgyuill/jeonse-ive:latest   # DockerHub 이미지 사용
     container_name: jeonse-ive-spring-app
     ports:
       - "8080:8080"

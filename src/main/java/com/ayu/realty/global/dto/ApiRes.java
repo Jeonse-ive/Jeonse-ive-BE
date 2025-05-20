@@ -12,10 +12,10 @@ import lombok.Getter;
 @Schema(description = "공통 API 응답")
 public class ApiRes<T> {
 
-    @Schema(description = "응답 코드", example = "M001" /* 또는 E001 등 */)
+    @Schema(description = "응답 코드", example = "응답 코드(M001)" /* 또는 E001 등 */)
     private final String code;
 
-    @Schema(description = "응답 메시지", example = "회원 정보 조회 성공")
+    @Schema(description = "응답 메시지", example = "응답 메세지(ㅇㅇ 응답 성공)")
     private final String message;
 
     @Schema(description = "응답 데이터", nullable = true)
