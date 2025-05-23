@@ -45,16 +45,11 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build -x test
 
-#      # 6. Docker build
-#      - name: Build Docker Image
-#        run: |
-#          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest .
-#
-      # 6. Docker build (with no-cache one-time)
-      - name: Build Docker Image (no cache one-time)
+      # 6. Docker build
+      - name: Build Docker Image
         run: |
-          echo "⚠️ [INFO] 이번 배포는 --no-cache 옵션을 사용해 전체 재빌드합니다"
-          docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest .
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPO_NAME }}:latest .
+
 
       # 7. DockerHub login
       - name: DockerHub Login
