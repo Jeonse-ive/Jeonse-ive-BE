@@ -1,8 +1,9 @@
-package com.ayu.realty.member;
+package com.ayu.realty.member.controller;
 
 import com.ayu.realty.global.dto.ApiRes;
 import com.ayu.realty.global.response.ErrorType.ErrorCode;
 import com.ayu.realty.global.response.SuccessType.MemberSuccessCode;
+import com.ayu.realty.member.service.MemberService;
 import com.ayu.realty.member.model.request.MemberSaveReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

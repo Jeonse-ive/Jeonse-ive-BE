@@ -1,8 +1,9 @@
-package com.ayu.realty.member;
+package com.ayu.realty.member.service;
 
-import com.ayu.realty.member.model.Member;
-import com.ayu.realty.member.model.Role;
+import com.ayu.realty.member.model.entity.Member;
+import com.ayu.realty.member.model.entity.Role;
 import com.ayu.realty.member.model.request.MemberSaveReq;
+import com.ayu.realty.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

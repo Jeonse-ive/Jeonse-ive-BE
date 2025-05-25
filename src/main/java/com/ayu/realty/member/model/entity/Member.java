@@ -1,4 +1,4 @@
-package com.ayu.realty.member.model;
+package com.ayu.realty.member.model.entity;
 
 import com.ayu.realty.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
