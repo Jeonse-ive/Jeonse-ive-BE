@@ -1,4 +1,4 @@
-package com.ayu.realty.member.model;
+package com.ayu.realty.member.model.entity;
 
 public enum Role {
     USER, ADMIN, GUEST;
