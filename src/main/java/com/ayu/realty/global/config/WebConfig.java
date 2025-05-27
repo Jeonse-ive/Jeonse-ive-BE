@@ -13,7 +13,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOrigins("http://3.34.141.44:5173") // 또는 "*"
+                    .allowedOrigins("http://13.51.32.42:5173") // 또는 "*"
                     .allowedMethods("*")
                     .allowedHeaders("*")
                     .allowCredentials(true); // 필요한 경우
