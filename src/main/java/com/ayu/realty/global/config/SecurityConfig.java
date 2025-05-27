@@ -72,7 +72,7 @@ public class SecurityConfig {
                                         "swagger-resources/**",
                                         "/webjars/**",
                                         "/api/login",
-                                        "/api/signup",
+                                        "/api/members/signup",
                                         "/api/logout",
                                         "/api/auth/token/refresh"
                                 ).permitAll()
