@@ -52,9 +52,12 @@ public class MemberApiController {
         if(member.getRole().equals(Role.ADMIN)) {
             List<MemberAdminRes> adminRes = memberService.getAllMembersForAdmin();
             return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.GET_ALL_MEMBERS, adminRes));
-        } else {
+        } else if (member.getRole().equals(Role.USER)){
             List<MemberPublicRes> members = memberService.getAllMemberForMember();
             return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.GET_ALL_MEMBERS, members));
+        } else {
+            // 권한이 없는 경우(예: 게스트 사용자)
+            return null;
         }
     }
 

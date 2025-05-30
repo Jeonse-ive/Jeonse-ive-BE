@@ -61,6 +61,7 @@ public class GlobalExceptionHandler {
                 .body(ApiRes.fail(ErrorCode.MEMBER_NOT_FOUND));
     }
 
+
     @ExceptionHandler(MissingServletRequestPartException.class)
     public void handleMissingServletRequestPartException(MissingServletRequestPartException ex) {
         log.error(">>> Multipart 파일 누락: {}", ex.getMessage());

@@ -4,6 +4,7 @@ import com.ayu.realty.global.security.jwt.filter.JWTFilter;
 import com.ayu.realty.global.security.jwt.filter.LoginFilter;
 import com.ayu.realty.global.security.jwt.service.JwtTokenService;
 import com.ayu.realty.global.util.JWTUtil;
+import com.ayu.realty.member.repository.MemberRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final ObjectMapper objectMapper;
     private final JwtTokenService jwtTokenService;
+    private final MemberRepository memberRepository;
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -84,7 +86,7 @@ public class SecurityConfig {
 
         loginFilter.setFilterProcessesUrl("/api/login");
 
-        JWTFilter jwtFilter = new JWTFilter(jwtUtil);
+        JWTFilter jwtFilter = new JWTFilter(jwtUtil, memberRepository);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class);
