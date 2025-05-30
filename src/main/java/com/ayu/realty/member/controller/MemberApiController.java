@@ -47,7 +47,7 @@ public class MemberApiController {
             summary = "사용자 전체 회원 조회",
             description = "모든 회원의 정보(이메일,이름)를 조회합니다."
     )
-    @GetMapping("/members")
+    @GetMapping("/")
     public ResponseEntity<ApiRes<List<?>>> getAllMembers(@AuthenticationPrincipal CustomUserDetails member) {
         if(member.getRole().equals(Role.ADMIN)) {
             List<MemberAdminRes> adminRes = memberService.getAllMembersForAdmin();
