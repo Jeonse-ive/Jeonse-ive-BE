@@ -1,6 +1,7 @@
 package com.ayu.realty.member.model.entity;
 
 import com.ayu.realty.global.entity.BaseTimeEntity;
+import com.ayu.realty.member.model.request.MemberReq;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,6 +34,15 @@ public class Member extends BaseTimeEntity {
                 .password(password)
                 .nickname(name)
                 .role(role)
+                .build();
+    }
+
+    public static MemberReq toDTO(Member member) {
+      return MemberReq.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .password(member.getPassword())
+                .role(member.getRole())
                 .build();
     }
 
