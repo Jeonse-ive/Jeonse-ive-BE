@@ -2,11 +2,14 @@ package com.ayu.realty.member.service;
 
 import com.ayu.realty.member.model.entity.Member;
 import com.ayu.realty.member.model.entity.Role;
+import com.ayu.realty.member.model.request.MemberReq;
 import com.ayu.realty.member.model.request.MemberSaveReq;
 import com.ayu.realty.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,5 +36,14 @@ public class MemberService {
 
         memberRepository.save(entity);
         return true;
+    }
+
+    // 모든 회원 정보를 조회하는 메서드
+    public List<MemberReq> getAllMembers() {
+        List<Member> members = memberRepository.findAll();
+
+        return members.stream()
+                .map(Member::toDTO)
+                .toList();
     }
 }
