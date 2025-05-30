@@ -1,7 +1,8 @@
 package com.ayu.realty.member.model.entity;
 
 import com.ayu.realty.global.entity.BaseTimeEntity;
-import com.ayu.realty.member.model.request.MemberReq;
+import com.ayu.realty.member.model.response.MemberAdminRes;
+import com.ayu.realty.member.model.response.MemberPublicRes;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,14 +18,16 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, length = 15)
     private String nickname;
 
-    @Column
+    @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -37,11 +40,18 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
-    public static MemberReq toDTO(Member member) {
-      return MemberReq.builder()
+    public static MemberPublicRes toPublicDTO(Member member) {
+      return MemberPublicRes.builder()
                 .email(member.getEmail())
                 .nickname(member.getNickname())
+                .build();
+    }
+
+    public static MemberAdminRes toAdminDTO(Member member) {
+        return MemberAdminRes.builder()
+                .email(member.getEmail())
                 .password(member.getPassword())
+                .nickname(member.getNickname())
                 .role(member.getRole())
                 .build();
     }

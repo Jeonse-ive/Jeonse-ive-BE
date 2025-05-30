@@ -1,6 +1,7 @@
 package com.ayu.realty.member.security;
 
 import com.ayu.realty.member.model.entity.Member;
+import com.ayu.realty.member.model.entity.Role;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,11 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public String getPassword() {
         return member.getPassword();
+    }
+
+
+    public Role getRole() {
+        return member.getRole();
     }
 
     @Override
