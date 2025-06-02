@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import java.nio.file.AccessDeniedException;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -59,6 +61,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(ErrorCode.MEMBER_NOT_FOUND.getStatus())
                 .body(ApiRes.fail(ErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    //4. 회원 권한 없음
+    @ExceptionHandler(AccessDeniedException.class)
+    public  ResponseEntity<?> handleAccessDenied(AccessDeniedException e) {
+        log.warn("접근거부: {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.ACCESS_DENIED.getStatus())
+                .body(ApiRes.fail(ErrorCode.ACCESS_DENIED));
+    }
+
+    //5. 비밀번호 일치하지 않음
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<?> handleInvalidPassword(InvalidPasswordException e) {
+        log.warn("비밀번호 불일치 {}", e.getMessage());
+        return ResponseEntity
+                .status(ErrorCode.INVALID_PASSWORD.getStatus())
+                .body(ErrorCode.INVALID_PASSWORD);
     }
 
 
