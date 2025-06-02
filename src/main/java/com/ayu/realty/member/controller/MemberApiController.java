@@ -31,7 +31,7 @@ public class MemberApiController {
 
 
     @Operation(
-            summary = "회원 정보 수정", description = "닉네임, 비밀ㅎ"
+            summary = "회원 정보 수정", description = "닉네임, 비밀번호, 수정"
     )
 
     @PutMapping("/memberInfo")
@@ -80,9 +80,6 @@ public class MemberApiController {
 
         return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_VIEW, dto));
     }
-
-
-
 
 
 
