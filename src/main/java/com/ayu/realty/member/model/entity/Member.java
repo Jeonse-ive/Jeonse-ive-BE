@@ -1,7 +1,7 @@
 package com.ayu.realty.member.model.entity;
 
 import com.ayu.realty.global.entity.BaseTimeEntity;
-import com.ayu.realty.member.model.response.MemberAdminRes;
+import com.ayu.realty.member.model.response.MemberPrivateRes;
 import com.ayu.realty.member.model.response.MemberPublicRes;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,8 +47,8 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
-    public static MemberAdminRes toAdminDTO(Member member) {
-        return MemberAdminRes.builder()
+    public static MemberPrivateRes toAdminDTO(Member member) {
+        return MemberPrivateRes.builder()
                 .email(member.getEmail())
                 .password(member.getPassword())
                 .nickname(member.getNickname())
@@ -56,4 +56,11 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
