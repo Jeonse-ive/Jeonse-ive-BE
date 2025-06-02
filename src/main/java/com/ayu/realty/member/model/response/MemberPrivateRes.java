@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MemberAdminRes {
+public class MemberPrivateRes {
     private String email;
     private String password;
     private String nickname;
