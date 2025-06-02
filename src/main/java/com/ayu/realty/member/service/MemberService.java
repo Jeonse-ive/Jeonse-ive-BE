@@ -1,14 +1,18 @@
 package com.ayu.realty.member.service;
 
+import com.ayu.realty.global.exception.InvalidPasswordException;
 import com.ayu.realty.member.model.entity.Member;
 import com.ayu.realty.member.model.request.MemberSignupReq;
-import com.ayu.realty.member.model.response.MemberAdminRes;
+import com.ayu.realty.member.model.request.MemberUpdateReq;
+import com.ayu.realty.member.model.response.MemberPrivateRes;
 import com.ayu.realty.member.model.response.MemberPublicRes;
+import com.ayu.realty.member.model.response.MemberUpdateRes;
 import com.ayu.realty.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,7 +44,7 @@ public class MemberService {
     }
 
     // 모든 회원 정보를 조회하는 메서드(관리자)
-    public List<MemberAdminRes> getAllMembersForAdmin() {
+    public List<MemberPrivateRes> getAllMembersForAdmin() {
         return memberRepository.findAll().stream()
                 .map(Member::toAdminDTO)
                 .toList();
@@ -60,4 +64,38 @@ public class MemberService {
        return Member.toPublicDTO(member);
     }
 
+    // 특정 회원의 정보를 수정
+    @Transactional
+    public MemberUpdateRes updateMemberInfo(Long id, MemberUpdateReq req) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("Member not found with id:" + id));
+
+        // 닉네임 변경
+        if (req.getNickname() != null && !req.getNickname().isBlank()) {
+            member.changeNickname(req.getNickname());
+        }
+
+        // 비밀번호가 변경된 경우에만 암호화
+        if (req.getPassword() != null && !req.getPassword().isBlank()) {
+            String encryptedPassword = passwordEncoder.encode(req.getPassword());
+            member.changePassword(encryptedPassword);
+        }
+
+        return MemberUpdateRes.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build();
+    }
+
+    @Transactional
+    public void deleteMember(Long id, String password) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(()-> new UsernameNotFoundException("Member not found with id: " + id));
+
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
+        }
+
+        memberRepository.delete(member);
+    }
 }

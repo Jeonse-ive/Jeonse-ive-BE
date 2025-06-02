@@ -1,23 +1,23 @@
 package com.ayu.realty.member.controller;
 
 import com.ayu.realty.global.dto.ApiRes;
-import com.ayu.realty.global.response.ErrorType.ErrorCode;
 import com.ayu.realty.global.response.SuccessType.MemberSuccessCode;
 import com.ayu.realty.member.model.entity.Role;
-import com.ayu.realty.member.model.response.MemberAdminRes;
+import com.ayu.realty.member.model.request.MemberUpdateReq;
+import com.ayu.realty.member.model.response.MemberPrivateRes;
 import com.ayu.realty.member.model.response.MemberPublicRes;
+import com.ayu.realty.member.model.response.MemberUpdateRes;
 import com.ayu.realty.member.security.CustomUserDetails;
 import com.ayu.realty.member.service.MemberService;
-import com.ayu.realty.member.model.request.MemberSignupReq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -29,28 +29,36 @@ public class MemberApiController {
     private final MemberService memberService;
 
 
+
     @Operation(
-            summary = "회원가입",
-            description = "사용자를 등록(이메일, 비밀번호, 닉네임)")
-    @PostMapping("/signup")
-    public ResponseEntity<ApiRes<Void>> signup(@Valid @RequestBody MemberSignupReq request){
-        boolean isSuccess = memberService.signup(request);
-        if (isSuccess) {
-            return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_CREATED, null));
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(ApiRes.fail(ErrorCode.DUPLICATE_EMAIL));
-        }
+            summary = "회원 정보 수정", description = "닉네임, 비밀ㅎ"
+    )
+
+    @PutMapping("/memberInfo")
+    public ResponseEntity<ApiRes<MemberUpdateRes>> updateMemberInfo(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @Valid @RequestBody MemberUpdateReq request) throws AccessDeniedException {
+         MemberUpdateRes res = memberService.updateMemberInfo(customUserDetails.getIdx(), request);
+         return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_UPDATED, res));
     }
+
+    @DeleteMapping("/")
+    public ResponseEntity<ApiRes<Void>> deleteMember(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestParam("password") String password) throws AccessDeniedException {
+        memberService.deleteMember(customUserDetails.getIdx(), password);
+        return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_DELETED));
+    }
+
 
     @Operation(
             summary = "사용자 전체 회원 조회",
-            description = "모든 회원의 정보(이메일,이름)를 조회합니다."
+            description = "관리자는 모든 회원의 모든 정보를, 일반회원은 전체 회원의 정보(이메일,이름)를 조회합니다."
     )
     @GetMapping("/")
     public ResponseEntity<ApiRes<List<?>>> getAllMembers(@AuthenticationPrincipal CustomUserDetails member) {
         if(member.getRole().equals(Role.ADMIN)) {
-            List<MemberAdminRes> adminRes = memberService.getAllMembersForAdmin();
+            List<MemberPrivateRes> adminRes = memberService.getAllMembersForAdmin();
             return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.GET_ALL_MEMBERS, adminRes));
         } else if (member.getRole().equals(Role.USER)){
             List<MemberPublicRes> members = memberService.getAllMemberForMember();
@@ -60,6 +68,7 @@ public class MemberApiController {
             return null;
         }
     }
+
 
     @Operation(
             summary = "특정 회원 정보 조회",
