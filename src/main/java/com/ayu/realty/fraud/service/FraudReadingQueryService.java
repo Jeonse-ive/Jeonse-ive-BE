@@ -15,6 +15,10 @@ public class FraudReadingQueryService {
     private final FraudReadingRepository fraudReadingRepository;
 
     public List<FraudReading> findByCity(String city) {
+        if ("All".equalsIgnoreCase(city)) {
+            return fraudReadingRepository.findAll();
+        }
         return fraudReadingRepository.findByCity(city);
     }
+
 }
