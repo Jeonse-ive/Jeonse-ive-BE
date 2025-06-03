@@ -3,7 +3,7 @@ package com.ayu.realty.global.dto;
 
 import com.ayu.realty.global.response.ErrorType.ErrorType;
 import com.ayu.realty.global.response.SuccessType.DataSuccessCode;
-import com.ayu.realty.global.response.SuccessType.UserSuccessCode;
+import com.ayu.realty.global.response.SuccessType.MemberSuccessCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -22,11 +22,11 @@ public class ApiRes<T> {
     private final T data;
 
     // 유저 성공 응답
-    public static <T> ApiRes<T> success(UserSuccessCode successCode, T data) {
+    public static <T> ApiRes<T> success(MemberSuccessCode successCode, T data) {
         return new ApiRes<>(successCode.getCode(), successCode.getMessage(), data);
     }
 
-    public static ApiRes<Void> success(UserSuccessCode successCode) {
+    public static ApiRes<Void> success(MemberSuccessCode successCode) {
         return new ApiRes<>(successCode.getCode(), successCode.getMessage(), null);
     }
 
