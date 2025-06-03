@@ -27,8 +27,6 @@ public class StationQueryService
                     Optional<NoiseReading> latest = noiseReadingRepository
                             .findTopByStationOrderByYearDescMonthDesc(station);
 
-                    if (latest.isEmpty()) return null;
-
                     return StationWithLatestNoiseRes.builder()
                             .stationName(station.getStationName())
                             .shortAddress(station.getShortAddress())
