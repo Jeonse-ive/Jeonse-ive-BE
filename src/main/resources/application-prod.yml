@@ -10,6 +10,11 @@ spring:
     port: ${REDIS_PORT}
     password: ${REDIS_PASSWORD}
 
+  jwt:
+    secret: ${JWT_SECRET_KEY}
+    access-token-expiration: ${JWT_ACCESS_EXPIRATION}
+    refresh-token-expiration: ${JWT_REFRESH_EXPIRATION}
+
   jpa:
     hibernate:
       ddl-auto: validate  # 운영환경에서는 validate 또는 none 권장
