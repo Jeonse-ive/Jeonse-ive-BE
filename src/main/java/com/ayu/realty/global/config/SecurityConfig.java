@@ -68,6 +68,10 @@ public class SecurityConfig {
                 // 요청 인가 정책
                 http.authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
+                                        "/api/fraud/**",
+                                        "/api/staions/**",
+                                        "/api/readings/**",
+                                        "/api/geocoding/**,",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
                                         "/v3/api-docs/**",
