@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth", description = "인증 관련 API")
-public class AuthController {
+public class AuthApiController {
 
     private final JwtTokenService jwtTokenService;
     private final AuthService authService;
