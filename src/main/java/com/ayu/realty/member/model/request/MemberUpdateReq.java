@@ -3,11 +3,10 @@ package com.ayu.realty.member.model.request;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
 @Getter
-public class MemberSaveReq {
-
+@Setter
+public class MemberUpdateReq {
     private String email;
-    private String password;
     private String nickname;
+    private String password;
 }

@@ -1,6 +1,8 @@
 package com.ayu.realty.member.model.entity;
 
 import com.ayu.realty.global.entity.BaseTimeEntity;
+import com.ayu.realty.member.model.response.MemberPrivateRes;
+import com.ayu.realty.member.model.response.MemberPublicRes;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,14 +18,16 @@ public class Member extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, length = 100)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false, length = 15)
     private String nickname;
 
-    @Column
+    @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -36,4 +40,27 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
+    public static MemberPublicRes toPublicDTO(Member member) {
+      return MemberPublicRes.builder()
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build();
+    }
+
+    public static MemberPrivateRes toAdminDTO(Member member) {
+        return MemberPrivateRes.builder()
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .nickname(member.getNickname())
+                .role(member.getRole())
+                .build();
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }
