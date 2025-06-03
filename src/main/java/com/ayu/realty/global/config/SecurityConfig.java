@@ -69,7 +69,7 @@ public class SecurityConfig {
                 http.authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
                                         "/api/fraud/**",
-                                        "/api/staions/**",
+                                        "/api/stations/**",
                                         "/api/readings/**",
                                         "/api/geocoding/**,",
                                         "/swagger-ui/**",
