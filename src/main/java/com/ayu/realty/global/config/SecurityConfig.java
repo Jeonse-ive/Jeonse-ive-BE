@@ -56,7 +56,7 @@ public class SecurityConfig {
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowCredentials(true);
                     config.setAllowedHeaders(List.of("*"));
-                    config.setExposedHeaders(List.of("Authorization"));
+                    config.setExposedHeaders(List.of("Authorization", "Refresh Token"));
                     config.setMaxAge(3600L);
                     return config;
                 }))
@@ -71,7 +71,7 @@ public class SecurityConfig {
                                         "/api/fraud/**",
                                         "/api/stations/**",
                                         "/api/readings/**",
-                                        "/api/geocoding/**,",
+                                        "/api/geocoding/**",
                                         "/swagger-ui/**",
                                         "/swagger-ui.html",
                                         "/v3/api-docs/**",
