@@ -35,6 +35,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException {
+        System.out.println(">>> LoginFilter - attemptAuthentication called");
+
         try {
             var LoginReq = objectMapper.readValue(request.getInputStream(), MemberLoginReq.class);
 
@@ -43,7 +45,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             );
             return authenticationManager.authenticate(authToken);
         } catch (IOException e) {
-            throw new RuntimeException("요청 본문이 올바른 JSON 형식이 아닙니다.", e);
+            e.printStackTrace(); // 콘솔에 바로 출력
+            try {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Invalid JSON format\"}");
+            } catch (IOException ex) {
+                ex.printStackTrace(); // 이 자체도 실패할 경우
+            }
+            return null;
         }
     }
 
