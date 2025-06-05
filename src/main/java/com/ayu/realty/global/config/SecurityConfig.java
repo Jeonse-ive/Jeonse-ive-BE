@@ -52,42 +52,39 @@ public class SecurityConfig {
                 // CORS 설정
                 .cors(cors -> cors.configurationSource(request -> {
                     var config = new org.springframework.web.cors.CorsConfiguration();
-                    config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+                    config.setAllowedOriginPatterns(List.of("http://localhost:5173", "https://jeonse-ive.kro.kr"));
                     config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     config.setAllowCredentials(true);
                     config.setAllowedHeaders(List.of("*"));
-                    config.setExposedHeaders(List.of("Authorization", "Refresh Token"));
+                    config.setExposedHeaders(List.of("Authorization", "Refresh-Token"));
                     config.setMaxAge(3600L);
                     return config;
                 }))
 
-                // 세션 관리 정책
+                // 세션 관리 정책 + 요청 인가 정책 (한 덩어리로 연결!)
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-                // 요청 인가 정책
-                http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers(
-                                        "/api/fraud/**",
-                                        "/api/stations/**",
-                                        "/api/readings/**",
-                                        "/api/geocoding/**",
-                                        "/swagger-ui/**",
-                                        "/swagger-ui.html",
-                                        "/v3/api-docs/**",
-                                        "swagger-resources/**",
-                                        "/webjars/**",
-                                        "/api/login",
-                                        "/api/members/signup",
-                                        "/api/logout",
-                                        "/api/auth/token/refresh"
-                                ).permitAll()
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api/fraud/**",
+                                "/api/stations/**",
+                                "/api/readings/**",
+                                "/api/geocoding/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "swagger-resources/**",
+                                "/webjars/**",
+                                "/api/login",
+                                "/api/members/signup",
+                                "/api/logout",
+                                "/api/auth/token/refresh"
+                        ).permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 );
 
         LoginFilter loginFilter = new LoginFilter(jwtUtil, objectMapper, authenticationManager(authenticationConfiguration), jwtTokenService);
-
         loginFilter.setFilterProcessesUrl("/api/login");
 
         JWTFilter jwtFilter = new JWTFilter(jwtUtil, memberRepository);
@@ -97,4 +94,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-}
+    }
