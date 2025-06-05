@@ -98,4 +98,10 @@ public class MemberService {
 
         memberRepository.delete(member);
     }
+
+    public MemberPublicRes getMemberByEmail(String email) {
+        Member entity = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Member not found"));
+        return Member.toPublicDTO(entity);
+    }
 }

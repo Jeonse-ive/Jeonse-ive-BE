@@ -81,6 +81,14 @@ public class MemberApiController {
         return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_VIEW, dto));
     }
 
+    @Operation(summary = "내 정보 조회", description = "현재 로그인한 사용자의 정보를 반환합니다.")
+    @GetMapping("/me")
+    public ResponseEntity<ApiRes<MemberPublicRes>> getMyInfo(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        MemberPublicRes dto = memberService.getMemberByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(ApiRes.success(MemberSuccessCode.MEMBER_VIEW, dto));
+    }
 
 
 }
