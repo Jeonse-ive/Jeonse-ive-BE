@@ -80,7 +80,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         // 응답 헤더에 JWT 토큰 추가
         response.setHeader("Authorization", "Bearer " + accessToken);
-        response.setHeader("Refresh Token", refreshToken);
+        response.setHeader("Refresh-Token", refreshToken);
 
         // 응답 바디(JSON) 생성
         Map<String, String> tokenMap = Map.of(
